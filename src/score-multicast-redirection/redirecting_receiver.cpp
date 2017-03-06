@@ -22,10 +22,17 @@
 
 int main(int argc, char* argv[])
 {
-    if (argc != 2)
+    std::string addr = "0.0.0.0";
+
+    if (argc > 2)
     {
-        std::cout << "Usage: " << argv[0] << " remote_ip" << std::endl;
+        std::cout << "Usage: " << argv[0] << "[ip_address]" << std::endl;
         return -1;
+    }
+
+    if (argc == 2)
+    {
+        addr = argv[1];
     }
 
     // Create the io_service object
@@ -38,7 +45,7 @@ int main(int argc, char* argv[])
     // Bind the score receiver to a specific address and port
     // The address can be a local IPv4 address or a multicast/broadcast address
     // It can also be "0.0.0.0" to listen on all local interfaces
-    receiver.bind("224.0.0.251", 7891, ec);
+    receiver.bind(addr, 7891, ec);
 
     if (ec)
     {

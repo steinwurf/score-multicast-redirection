@@ -39,6 +39,66 @@ Install the binaries into a folder. Here we just create an "install" directory::
 
     python waf install --install_path=install --install_shared_libs --install_static_libs
 
+The redirection examples can be run from inside the install directory::
+
+    cd install
+
+The receiver is run with the address on which data should be received, default
+is all available local interfaces::
+
+    ./redirecting_receiver
+
+However, in order to receive data from a multicast address, this address
+should be specified, e.g. like::
+
+    ./redirecting_receiver 224.0.0.251
+
+The ports used are hardcoded. The redirecting receiver
+will now take all score protocol data received from address 224.0.0.251
+(on port 7891), extract the application data and send this to port 23337
+on localhost (127.0.0.1).
+
+The redirecting sender is started (on the transmitting side) with the
+remote address as argument. To accommodate the above multicast receiver
+instance, this would be::
+
+    ./redirecting_sender 224.0.0.251
+
+This will redirect any data from localhost on port 13337 (udp) to multicast
+traffic on port 224.0.0.251, and carried with the score protocol to protect
+against packet loss. Note that the operating system will route the generated
+multicast traffic to the default interface for multicasting.
+The interface used for outbound multicast traffic can be specified with a second
+commandline argument::
+
+    ./redirecting_sender 224.0.0.251 10.0.0.42
+
+This forces the multicast packets to be sent via the network interface with
+local address 10.0.0.42.
+
+When both redirecting sender and receiver and receiver has been started,
+data sent to localhost port 13337 on the sender side will be available on
+localhost port 23337 on the receiver side(s). Multiple receivers may be present.
+
+For a video streaming example, VLC can be used to stream a video. On the sender
+side, start a video stream of a local video with::
+
+    vlc [/path/to/video_file] --sout '#duplicate{dst=display,dst=rtp{mux=ts,dst=127.0.0.1,port=13337}}'
+
+On the receiver side, the video stream is viewed with::
+
+    vlc rtp://127.0.0.1:23337
+
+Please note that the score protocol may add some delay and jitter to the
+delivery of the video stream, which may cause some issues with the video
+experience from this bare-bone vlc example.
+The video experience may also be influenced by the video encoding.
+This may even prevent receivers from joining mid-stream.
+
+Also please note that if the score sender is reset, the corresponding receivers
+should also be reset. Receivers can be reset at any time without affecting the
+sender.
+
 ..
 .. Run the unit tests::
 ..

@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     // local interface to use for multicast, and can be omitted to use the
     // default interface.
     // The third argument should be modified to the correct interface
-    sender.add_remote("224.0.0.251", 7891, ec);
+    sender.add_remote(argv[1], 7891, ec);
 
     if (ec)
     {
