@@ -3,4 +3,4 @@ News for multicast-redirection
 
 Latest
 ------
-* tbd
+* Added example code.
